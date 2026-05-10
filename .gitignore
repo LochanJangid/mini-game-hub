@@ -1,0 +1,7 @@
+# Python cache directories
+__pycache__/
+
+# Compiled bytecode, optimized files, and dynamic libraries
+*.py[cod]
+*$py.class
+
