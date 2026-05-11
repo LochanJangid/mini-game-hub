@@ -1,7 +1,8 @@
-from src.games import typing_speed_test
+from src.games.typing_game import TypingGame
 
 def main():
-    typing_speed_test.play()
+    game = TypingGame()
+    game.run()
 
 if __name__ == "__main__":
     main()
