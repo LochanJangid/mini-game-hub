@@ -2,6 +2,7 @@ import time
 import textwrap
 import random
 from src.ui.components import title, border
+from src.games.base_game import Game
 from typing import Dict, List, Union
 
 class SentenceBank:
@@ -135,16 +136,8 @@ class TypingSession:
         
         wpm = round((corrected_chars * 60)/(5*elapsed))
         accuracy = round((corrected_chars / total_chars) * 100, 2)
-        coins = 0
-        if accuracy > 90:
-            coins = 10
-        elif accuracy > 80:
-            coins = 5
-        elif accuracy > 40:
-            coins = 2
-        elif accuracy > 20:
-            coins = 1
-
+        coins = wpm/10000 - (total_chars - corrected_chars)
+    
         return {
             "wpm": wpm, 
             "accuracy": accuracy, 
@@ -214,7 +207,7 @@ class TerminalUI:
         print(border("empty", 30))
         print(border("bottom", 30))
 
-class TypingGame:
+class TypingGame(Game):
     """The main controller coordinating the game flow."""
 
     bank: SentenceBank
@@ -239,4 +232,8 @@ class TypingGame:
         user_input = input(">> ")
         session.stop(user_input)
         results = session.calculate_results()
+        self.coins = results["coins"]
         self.ui.display_score_card(results)
+    
+    def get_coins(self) -> int:
+        return self.coins
