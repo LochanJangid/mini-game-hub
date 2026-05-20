@@ -1,8 +1,7 @@
-import time
 import textwrap
 import random
-from src.ui.components import title, border
-from src.games.base_game import Game
+from src.ui.components import title
+from src.games.base_game import Game, GameSession, GameUI
 from typing import Dict, List, Union
 
 class SentenceBank:
@@ -32,6 +31,7 @@ class SentenceBank:
                 "Every weekend our group of friends visited the public park beside the lake to relax after long study sessions. Some people brought snacks while others played cricket or listened to music under the trees. Children ran across the walking paths chasing each other with endless energy while older people discussed politics, business, and local news on nearby benches. As the sun slowly disappeared behind the buildings, the lights around the lake reflected beautifully across the water. Nobody wanted to leave early because the peaceful atmosphere made ordinary evenings feel surprisingly memorable and calm after exhausting days filled with assignments, deadlines, and endless digital distractions.",
             ]
         },
+
     "medium": {
         10: [
             "Technology changes rapidly forcing companies to continuously improve their software systems",
@@ -84,36 +84,17 @@ class SentenceBank:
         except KeyError:
             raise ValueError(f"Sentnce not found for difficulty '{difficulty}' and word count '{word_count}'.")
          
-class TypingSession:
-    """Encapsulates the logic and state of a single typing round."""
-
-    target_sentence: str
-    user_input: str
-    start_time: float
-    end_time: float
+class TypingSession(GameSession):
+    """Inherits from GameSession to handle typing game session logic."""
 
     def __init__(self, target_sentence: str) -> None:
         self.target_sentence = target_sentence
         self.user_input = ""
-        self.start_time = 0.0
-        self.end_time = 0.0
 
-    def start(self) -> None:
-        """Records the start time."""
-        self.start_time = time.time()
-
-    def stop(self, user_input: str) -> None:
-        """Records the end time and user input."""
-        self.end_time = time.time()
-        self.user_input = user_input
-
-    def _get_elapsed_time(self) -> float:
-        """Returns total seconds of elapsed."""
-        return  self.end_time - self.start_time
-
-    def calculate_results(self) -> Dict[str, Union[int, float]]:
+    def calculate_score(self, user_input: str) -> Dict[str, Union[int, float]]:
         """Calculate WPM, Accuracy and Coins based on the session data."""
         elapsed = self._get_elapsed_time()
+        self.user_input = user_input
 
         # Edge Case: prevent Zero Division Error if user hit enter instantly
         if elapsed <= 0:
@@ -141,9 +122,10 @@ class TypingSession:
         return {
             "wpm": wpm, 
             "accuracy": accuracy, 
-            "coins": coins}
+            "coins": coins
+        }
 
-class TerminalUI:
+class TerminalUI(GameUI):
     
     @staticmethod
     def display_title() -> None:
@@ -186,27 +168,6 @@ class TerminalUI:
                 print(f"| {line:^{max_line_width + 10}} |")
         print(separator_line)
 
-    @staticmethod
-    def display_score_card(result: Dict[str, Union[int, float]]) -> None:
-        """Display score card of Gamer."""
-        print(border("top", 30))
-        # Header - centered roughly
-        print(f"┃{'🏆 Result 🏆':^28}┃")
-        print(f"┃{"-"*30}┃")
-        print(border("empty", 30))
-
-        # Data rows with dynamic padding to keep the box width consistent
-        wpm_text = f" WORDS PER MINUTE: {result['wpm']} WPM"
-        acc_text = f" ACCURACY: {result['accuracy']}%"
-        coins_text = f" COINS: +{result['coins']} 🪙"
-
-        print(f"┃{wpm_text:<30}┃")
-        print(f"┃{acc_text:<30}┃")
-        print(f"┃{coins_text:<30}┃")
-
-        print(border("empty", 30))
-        print(border("bottom", 30))
-
 class TypingGame(Game):
     """The main controller coordinating the game flow."""
 
@@ -230,8 +191,8 @@ class TypingGame(Game):
         input() # Start Trigger
         session.start()
         user_input = input(">> ")
-        session.stop(user_input)
-        results = session.calculate_results()
+        session.stop()
+        results = session.calculate_score(user_input)
         self.coins = results["coins"]
         self.ui.display_score_card(results)
     

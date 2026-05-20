@@ -1,31 +1,24 @@
-import time
 import random
-from src.ui.components import title, border
-from src.games.base_game import Game
-from typing import Dict, List, Union
+from src.ui.components import title
+from src.games.base_game import Game, GameUI, GameSession
+from typing import Dict, Union
 
 
-class TerminalSession:
+class TerminalSession(GameSession):
     """Encapsulates the logic and state of a single guessing round."""
 
     target_number: int
     user_input: str
-    start_time: float
-    end_time: float
     attempts: int
 
     def __init__(self, target_number: int) -> None:
         self.target_number = target_number
-        self.user_input = 0
+        self.user_input = ''
         self.start_time = 0.0
         self.end_time = 0.0
         self.attempts = 0
 
-    def start(self) -> None:
-        """Records the start time."""
-        self.start_time = time.time()
-
-    def check(self, user_input: int) -> None:
+    def check(self, user_input: int) -> str:
          """Make attempts in guessing and check them with targeted value.
             -- if not match it return False
                otherwise True.
@@ -37,16 +30,12 @@ class TerminalSession:
              return "Too Small"
          if user_input > self.target_number:
              return "Too Big"
-         
-         self.end_time = time.time()
+             
          return "Good"
 
-    def _get_elapsed_time(self) -> float:
-        """Returns total seconds of elapsed."""
-        return  self.end_time - self.start_time
-
-    def calculate_results(self) -> Dict[str, Union[int, float]]:
+    def calculate_score(self, use_input: str) -> Dict[str, Union[int, float]]:
         """Coins Attempts, Time,  based on the session data."""
+        self.stop()
         elapsed = round(self._get_elapsed_time(), 2)
         coins = round(10 - elapsed/1000*self.attempts)
         return {
@@ -55,7 +44,7 @@ class TerminalSession:
             "coins": coins
             }
 
-class TerminalUI:
+class TerminalUI(GameUI):
     
     @staticmethod
     def display_title() -> None:
@@ -71,31 +60,7 @@ class TerminalUI:
             except ValueError:
                 return 0
 
-
-
-    @staticmethod
-    def display_score_card(result: Dict[str, Union[int, float]]) -> None:
-        """Display score card of Gamer."""
-        print(border("top", 30))
-        # Header - centered roughly
-        print(f"┃{'🏆 Result 🏆':^28}┃")
-        print(f"┃{"-"*30}┃")
-        print(border("empty", 30))
-
-        attempts_text = f" ATTEMPTS: {result['attempts']}"
-        time_text = f" TIME: {result['time']}"
-        coins_text = f" COINS: +{result['coins']} 🪙"
-
-        print(f"┃{attempts_text:<30}┃")
-        print(f"┃{time_text:<30}┃")
-        print(f"┃{coins_text:<30}┃")
-
-        print(border("empty", 30))
-        print(border("bottom", 30))
-    
-
 class GuessingGame(Game):
-
     ui: TerminalUI
 
     def __init__(self) -> None:
@@ -116,9 +81,9 @@ class GuessingGame(Game):
             if remark=="Good":
                 break
 
-        results = session.calculate_results()
+        results = session.calculate_score(str(user_input))
         self.coins = results["coins"]
         self.ui.display_score_card(results)
 
-    def get_coins(self) -> int:
+    def get_coins(self) -> float:
         return self.coins
