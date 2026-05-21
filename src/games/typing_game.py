@@ -117,8 +117,10 @@ class TypingSession(GameSession):
         
         wpm = round((corrected_chars * 60)/(5*elapsed))
         accuracy = round((corrected_chars / total_chars) * 100, 2)
-        coins = wpm/10000 - (total_chars - corrected_chars)
-    
+        base_coins = wpm // 10
+        penalty = (total_chars - corrected_chars) // 2
+        coins = max(0, base_coins - penalty)
+        
         return {
             "wpm": wpm, 
             "accuracy": accuracy, 
@@ -160,7 +162,7 @@ class TerminalUI(GameUI):
     def display_target_text(sentence: str) -> None:
         """Display the target text by wrapping it in a box."""
         wrapped_lines = textwrap.wrap(sentence, width=70)
-        max_line_width = max((len(line) for line in sentence), default=70)
+        max_line_width = max((len(line) for line in wrapped_lines), default=70)
 
         separator_line = "-"*(max_line_width+14)
         print(separator_line)
@@ -177,6 +179,7 @@ class TypingGame(Game):
     def __init__(self) -> None:
         self.bank = SentenceBank()
         self.ui = TerminalUI()
+        self.coins = 0
 
     def run(self) -> None:
         """The center point which connect everything and run game."""
@@ -196,5 +199,5 @@ class TypingGame(Game):
         self.coins = results["coins"]
         self.ui.display_score_card(results)
     
-    def get_coins(self) -> int:
+    def get_coins(self) -> float:
         return self.coins
