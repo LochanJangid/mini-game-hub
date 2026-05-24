@@ -1,8 +1,11 @@
 import textwrap
 import random
-from src.ui.components import title
+from src.ui.components import box
 from src.games.base_game import Game, GameSession, GameUI
+from src.db.models import save_score
+
 from typing import Dict, List, Union
+
 
 class SentenceBank:
     """Handles the storage and retrieval of test sentence."""
@@ -90,7 +93,7 @@ class TypingSession(GameSession):
     def __init__(self, target_sentence: str) -> None:
         self.target_sentence = target_sentence
         self.user_input = ""
-
+        
     def calculate_score(self, user_input: str) -> Dict[str, Union[int, float]]:
         """Calculate WPM, Accuracy and Coins based on the session data."""
         elapsed = self._get_elapsed_time()
@@ -132,7 +135,7 @@ class TerminalUI(GameUI):
     @staticmethod
     def display_title() -> None:
         """Display the game title."""
-        title("Typing Speed Test 🧑‍💻", "My eyes are on your fingers 🫵.")
+        box("Typing Speed Test 🧑‍💻 \nMy eyes are on your fingers 🫵.")
 
     @staticmethod
     def prompt_word_count() -> int:
@@ -179,9 +182,9 @@ class TypingGame(Game):
     def __init__(self) -> None:
         self.bank = SentenceBank()
         self.ui = TerminalUI()
-        self.coins = 0
+        self.coins: int = 0
 
-    def run(self) -> None:
+    def run(self, player: int) -> None:
         """The center point which connect everything and run game."""
         self.ui.display_title()
         word_count = self.ui.prompt_word_count()
@@ -196,8 +199,10 @@ class TypingGame(Game):
         user_input = input(">> ")
         session.stop()
         results = session.calculate_score(user_input)
-        self.coins = results["coins"]
+        self.coins = int(results["coins"])
+        save_score(player, 0, session._get_elapsed_time(), self.coins)
         self.ui.display_score_card(results)
+        
     
     def get_coins(self) -> float:
         return self.coins

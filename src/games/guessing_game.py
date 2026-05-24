@@ -1,6 +1,7 @@
 import random
-from src.ui.components import title
+from src.ui.components import box
 from src.games.base_game import Game, GameUI, GameSession
+from src.db.models import save_score
 from typing import Dict, Union
 
 
@@ -33,7 +34,7 @@ class TerminalSession(GameSession):
              
          return "Good"
 
-    def calculate_score(self, use_input: str) -> Dict[str, Union[int, float]]:
+    def calculate_score(self, user_input: str) -> Dict[str, Union[int, float]]:
         """Coins Attempts, Time,  based on the session data."""
         self.stop()
         elapsed = round(self._get_elapsed_time(), 2)
@@ -49,7 +50,7 @@ class TerminalUI(GameUI):
     @staticmethod
     def display_title() -> None:
         """Display the game title."""
-        title("Guess Number Game 🥸", "My eyes are on your mind 🫵.")
+        box("Guess Number Game 🥸 \nMy eyes are on your mind 🫵.")
 
     @staticmethod
     def prompt_user_input() -> int: 
@@ -66,7 +67,7 @@ class GuessingGame(Game):
     def __init__(self) -> None:
         self.ui = TerminalUI()
     
-    def run(self) -> None:
+    def run(self, player:int) -> None:
         """The center point which connect everything and run game."""
         self.ui.display_title()
 
@@ -82,7 +83,8 @@ class GuessingGame(Game):
                 break
 
         results = session.calculate_score(str(user_input))
-        self.coins = results["coins"]
+        self.coins = int(results["coins"])
+        save_score(player, 1, session._get_elapsed_time(), self.coins)
         self.ui.display_score_card(results)
 
     def get_coins(self) -> float:
