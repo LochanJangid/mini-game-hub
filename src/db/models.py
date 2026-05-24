@@ -10,3 +10,15 @@ def register_player(name: str):
 def save_score(player_id: int, game_id: int, duration: int, earned_coins: int):
     db = get_db()
     db.query("INSERT INTO sessions (player_id, game_id, duration, earned_coins) VALUES (?, ?, ?, ?)", (player_id, game_id, duration, earned_coins))
+
+def get_leaderboard():
+    db = get_db()
+    rows = db.query("""
+        SELECT players.name, SUM(earned_coins) AS coins
+          FROM sessions 
+          JOIN players ON player_id=players.id
+        GROUP BY player_id 
+        ORDER BY coins
+        LIMIT 3;""", operation="fetchall")
+    return rows
+    
