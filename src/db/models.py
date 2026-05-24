@@ -1,10 +1,12 @@
 from db.connection import get_db
 
 
-def register_player(name: str):
+def login_player(name: str):
     db = get_db()
-    db.query("INSERT INTO players (name) VALUES (?)", (name, ))
-    row = db.query("SELECT last_insert_rowid()", operation="fetchone")
+    row = db.query("SELECT id FROM players WHERE name = ?", (name, ), operation="fetchone")
+    if not row:
+        db.query("INSERT INTO players (name) VALUES (?)", (name, ))
+        row = db.query("SELECT last_insert_rowid()", operation="fetchone")
     return row[0]
 
 def save_score(player_id: int, game_id: int, duration: int, earned_coins: int):
