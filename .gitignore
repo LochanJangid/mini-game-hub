@@ -2,6 +2,7 @@
 __pycache__/
 
 # Compiled bytecode, optimized files, and dynamic libraries
+*.db
 *.py[cod]
 *$py.class
 
