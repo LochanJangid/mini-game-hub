@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class Game(ABC):
     @abstractmethod
-    def run(self):
+    def run(self, player: int):
         pass
 
     @abstractmethod
