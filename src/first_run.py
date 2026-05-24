@@ -6,4 +6,4 @@ from typing import Dict
 def execute_setup(games: Dict[int, str]):
     create_tables()
     insert_games(games)
-    
+        
