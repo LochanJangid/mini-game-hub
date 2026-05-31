@@ -55,7 +55,7 @@ class show_leaderboard:
         print(f"├{'─' * (rank_w + 2)}┼{'─' * (name_w + 2)}┼{'─' * (score_w + 2)}┤")
         
         for leader in leaders:
-            print(f"│ {leader["rank"]:<{rank_w}} │ {leader["name"]:<{name_w}} │ {leader["coins"]:>{score_w}} │")
+            print(f"│ {leader["coin_rank"]:<{rank_w}} │ {leader["name"]:<{name_w}} │ {leader["coins"]:>{score_w}} │")
             
         print(f"╰{'─' * (rank_w + 2)}┴{'─' * (name_w + 2)}┴{'─' * (score_w + 2)}╯")
 
