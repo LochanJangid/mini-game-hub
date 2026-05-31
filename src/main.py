@@ -14,7 +14,7 @@ MAP = {
     "Leaderboard": show_leaderboard
 }
 
-GAMES = {0: "Typing Speed Test", 1: "Guess Number Game", 2: "Tic Tac Toe", 9: "Leaderboard"}
+GAMES = {1: "Typing Speed Test", 2: "Guess Number Game", 3: "Tic Tac Toe", 9: "Leaderboard"}
 
 
 def main():
