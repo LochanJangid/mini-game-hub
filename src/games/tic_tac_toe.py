@@ -141,8 +141,7 @@ class ToeGame(Game):
         session = ToeSession()
         
         print("When you're ready, hit enter ↲ to start.")
-        input()  # Start Trigger
-        
+        input()
         session.start()
         
         while not session.winner and session.moves_made < 9:
@@ -157,7 +156,7 @@ class ToeGame(Game):
                 
             # Computer's Turn
             print("\nComputer 'O' is thinking...")
-            time.sleep(0.5) # Artificial delay for pacing
+            time.sleep(0.5) 
             comp_move = session.get_computer_move()
             session.place_marker(comp_move, 'O')
 
@@ -167,13 +166,7 @@ class ToeGame(Game):
         # Calculate and Display Results
         results = session.calculate_score()
         self.coins = int(results["coins"])
-        
-        # Save score assuming the same DB structure from the TypingGame
-        try:
-            save_score(player, 0, session._get_elapsed_time(), self.coins)
-        except NameError:
-            pass # Fallback if save_score isn't imported
-            
+        save_score(player, 3, session._get_elapsed_time(), self.coins)  
         self.ui.display_score_card(results)
 
     def get_coins(self) -> float:
