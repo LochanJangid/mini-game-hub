@@ -25,15 +25,23 @@ class MainUI:
     
     def prompt_command(self) -> str:
         return input("Enter a command: ")
+        
+    def bye(self) -> None:
+        print()
+        box("Bye, See you tommorow :) \nStay Hydrated. 🍼")
 
-    def show_leaderboard(self):
+# Leaderboard UI -> class because i don't want to mashup thing at main.py games.run() commands and mapping
+class show_leaderboard:
+    def run(self, player):
+        # it have to take player for stay with main theme 
+        # but in future we will decoupling their command logics like: run games, show ui
         leaders = get_leaderboard()
         if not leaders:
             print("╭────────────────────────╮")
             print("│ No scores yet!         │")
             print("╰────────────────────────╯")
             return
-
+                
         max_name = max((len(str(d["name"])) for d in leaders), default=6)
         name_w = max(max_name, 10)
         rank_w = 4
@@ -45,17 +53,11 @@ class MainUI:
         print(f"├{'─' * (rank_w + 2)}┬{'─' * (name_w + 2)}┬{'─' * (score_w + 2)}┤")
         print(f"│ {'Rank':<{rank_w}} │ {'Name':<{name_w}} │ {'Coins':>{score_w}} │")
         print(f"├{'─' * (rank_w + 2)}┼{'─' * (name_w + 2)}┼{'─' * (score_w + 2)}┤")
-
-        for leader in leaders:
-            print(f"│ {leader["rank"]:<{rank_w}} │ {leader["name"]:<{name_w}} │ {leader["coins"]:>{score_w}} │")
-
-        print(f"╰{'─' * (rank_w + 2)}┴{'─' * (name_w + 2)}┴{'─' * (score_w + 2)}╯")
-
         
-    def bye(self) -> None:
-        print()
-        box("Bye, See you tommorow :) \nStay Hydrated. 🍼")
-    
+        for leader in leaders:
+            print(f"│ {leader["coin_rank"]:<{rank_w}} │ {leader["name"]:<{name_w}} │ {leader["coins"]:>{score_w}} │")
+            
+        print(f"╰{'─' * (rank_w + 2)}┴{'─' * (name_w + 2)}┴{'─' * (score_w + 2)}╯")
 
         
 

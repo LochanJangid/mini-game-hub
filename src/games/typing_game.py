@@ -94,7 +94,7 @@ class TypingSession(GameSession):
         self.target_sentence = target_sentence
         self.user_input = ""
         
-    def calculate_score(self, user_input: str) -> Dict[str, Union[int, float]]:
+    def calculate_score(self, user_input: str) -> Dict[str, Union[int, float, str]]:
         """Calculate WPM, Accuracy and Coins based on the session data."""
         elapsed = self._get_elapsed_time()
         self.user_input = user_input

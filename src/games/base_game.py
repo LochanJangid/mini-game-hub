@@ -23,7 +23,7 @@ class GameSession(ABC):
         return self._end_time - self._start_time
 
     @abstractmethod
-    def calculate_score(self, user_input: str) -> Dict[str, Union[int, float]]:
+    def calculate_score(self, user_input: str) -> Dict[str, Union[int, float, str]]:
         pass
 
 class GameUI(ABC):
@@ -35,7 +35,7 @@ class GameUI(ABC):
     def display_title() -> None:
         pass
     
-    def display_score_card(self, result: Dict[str, Union[int, float]]) -> None:
+    def display_score_card(self, result: Dict[str, Union[int, float, str]]) -> None:
         """Display score card of Gamer."""
         from src.ui.components import border
         

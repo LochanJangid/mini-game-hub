@@ -26,13 +26,13 @@ def get_leaderboard():
     db = get_db()
     rows = db.query("""
         SELECT *, 
-               DENSE_RANK() OVER(ORDER BY coins) AS `rank` 
+               DENSE_RANK() OVER(ORDER BY coins DESC) AS coin_rank 
           FROM (
             SELECT players.name, 
                    SUM(earned_coins) AS coins
             FROM sessions 
             JOIN players ON sessions.player_id=players.id
-            GROUP BY player_id 
+            GROUP BY players.id, players.name 
         ) AS tb;
         """, operation="fetchall")
     return rows
