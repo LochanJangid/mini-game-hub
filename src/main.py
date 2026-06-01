@@ -22,7 +22,6 @@ def main():
     ui = MainUI()
     ui.intro("👾 Mini Game Hub 🎮", "Your central hub for Python mini-games 🎮.")
     player = login_player(ui.prompt_player_name())
-    print("Welcome", player)
     ui.show_commands(GAMES)
     while True:
         try:
