@@ -34,7 +34,7 @@ class TerminalSession(GameSession):
              
          return "Good"
 
-    def calculate_score(self, user_input: str) -> Dict[str, Union[int, float]]:
+    def calculate_score(self, user_input: str) -> Dict[str, Union[int, float, str]]:
         """Coins Attempts, Time,  based on the session data."""
         self.stop()
         elapsed = round(self._get_elapsed_time(), 2)
